@@ -7,7 +7,7 @@ import torch
 import torchvision.transforms as transforms
 
 from utils import download_weights, configs
-from MFN_model import MobileFacenet
+from model import MobileFacenet
 
 mobilefacenet_configs = configs.get("model", {}).get("mobilefacenet", {})
 assert mobilefacenet_configs != {}
@@ -33,7 +33,7 @@ class MobileFaceNet_em:
         model = MobileFacenet()
 
         try:
-            checkpoint = torch.load(self.checkpoint_path)
+            checkpoint = torch.load(self.checkpoint_path, map_location=torch.device('cpu'), weights_only=True)
             model.load_state_dict(checkpoint['net_state_dict'])
             model.eval()
         except Exception as e:

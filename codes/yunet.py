@@ -1,7 +1,7 @@
 import os
 import numpy as np
 import cv2
-from typing import Optional
+from typing import Optional, Dict
 
 from utils import download_weights, configs
 

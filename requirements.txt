@@ -1,7 +1,6 @@
 numpy
 gdown
-json
-opencv-python >= 4.10.0
 torch
 torchvision
-faiss
+faiss-cpu
+opencv-python >= 4.10.0

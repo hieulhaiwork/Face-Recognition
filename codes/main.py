@@ -4,7 +4,6 @@ Github: https://github.com/hieulhaiwork
 Mail: hieulh.work@gmail.com
 Country: Viet Nam 
 """
-
 import os
 import numpy as np
 import cv2
@@ -27,7 +26,7 @@ def main():
     # vis.align_vis(image_dict)
     for key, image in image_dict.items():
         embedding = embedder.embedding(image)
-    print(embedding)
+    print(embedding.numpy().shape)
 
 
 if __name__ == '__main__':

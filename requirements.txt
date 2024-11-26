@@ -1,2 +1,7 @@
 numpy
+gdown
+json
 opencv-python >= 4.10.0
+torch
+torchvision
+faiss

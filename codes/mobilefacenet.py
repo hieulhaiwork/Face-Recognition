@@ -1,7 +1,7 @@
 import os
 import numpy as np
 import cv2
-from typing import Optional
+from typing import Optional, Dict
 
 import torch
 import torchvision.transforms as transforms
@@ -41,19 +41,20 @@ class MobileFaceNet_em:
 
         return model
     
-    def embedding(self, image: np.ndarray):
-
-        transform = transforms.Compose([
-            transforms.ToPILImage(),
-            transforms.ToTensor(),
-            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
-        ])
-        
-        image_tensor = transform(image)
-        image_tensor = image_tensor.unsqueeze(0)
+    def embedding(self, image_dict: Dict[int, np.ndarray]):
+        """
+        Embedding images got from Dictionary.
+        Args:
+            - image_dict (Dict[int, np.ndarray]): Aligned image dictionary
+        """
+        embeddings_list = list(image_dict.values())
+        image_tensor = torch.tensor(np.stack(embeddings_list, axis=0)).permute(0, 3, 1, 2).float()
 
         with torch.no_grad():
             embedding = self.model(image_tensor)
-            return embedding
+        
+        numpy_array = embedding.cpu().numpy()
+        embedding_list = [numpy_array[i] for i in range(numpy_array.shape[0])]
+        return embedding_list
 
 

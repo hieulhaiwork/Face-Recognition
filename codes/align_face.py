@@ -33,6 +33,7 @@ class AlignFace:
 
     def _align(self, face_dict, image):
         h, w = image.shape[:2]
+        base_size = 128
 
         eyes = face_dict['features'][:2]
         right_eye = eyes[0]
@@ -49,5 +50,7 @@ class AlignFace:
         M = cv2.getRotationMatrix2D(center, angle, 1)
 
         aligned_face = cv2.warpAffine(image, M, (w, h), flags=cv2.INTER_CUBIC)
+
+        aligned_face = cv2.resize(aligned_face, (base_size, base_size))
 
         return aligned_face

@@ -12,6 +12,9 @@
         }
     },
     "database": {
-        
+        "path": "database/face_db.index"
+    },
+    "names": {
+        "path": "database/names.json"
     }
 }

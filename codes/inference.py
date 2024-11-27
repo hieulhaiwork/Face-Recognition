@@ -17,7 +17,7 @@ embedder = MobileFaceNet_em(checkpoint_path=None)
 database = VectorDatabase(quantized=False)
 
 def inference():
-    image_test = cv2.imread("images/Zhang_Ziyi_0002.jpg")
+    image_test = cv2.imread("images/Zhang_Ziyi_0001.jpg")
     faces_dict = detector.detect(image_test)
     image_dict = aligner(faces_dict, image_test)
     embeddings_list = embedder.embedding(image_dict)

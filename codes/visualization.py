@@ -31,9 +31,9 @@ class Visualize:
     
     def __call__(self, image: np.ndarray, faces_dict: Dict[str, Tuple[int, int]], name_list: List[str], distance_list: List[float]):
         for key, face in faces_dict.items():
-            # if distance_list[key] > 1000:
-            #     break
-            # else:
+            if distance_list[key] > 100:
+                break
+            else:
                 bounding_box = face['bounding_box']
                 cv2.rectangle(image, (bounding_box[0], bounding_box[1]), (bounding_box[2], bounding_box[3]), (0,255,0), 1)
                 

@@ -4,7 +4,7 @@ import json
 
 import gdown
 
-with open('codes/configs.json', 'r') as f:
+with open('codes/utils/configs.json', 'r') as f:
     configs = json.load(f)
 
 def download_weights(filename: str, source_url: str) -> str:

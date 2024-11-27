@@ -6,8 +6,8 @@ from typing import Optional, Dict
 import torch
 import torchvision.transforms as transforms
 
-from utils import download_weights, configs
-from model import MobileFacenet
+from .helper import download_weights, configs
+from .model import MobileFacenet
 
 mobilefacenet_configs = configs.get("model", {}).get("mobilefacenet", {})
 assert mobilefacenet_configs != {}
@@ -49,6 +49,7 @@ class MobileFaceNet_em:
         """
         embeddings_list = list(image_dict.values())
         image_tensor = torch.tensor(np.stack(embeddings_list, axis=0)).permute(0, 3, 1, 2).float()
+        # Chuẩn hóa
 
         with torch.no_grad():
             embedding = self.model(image_tensor)

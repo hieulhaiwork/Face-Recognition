@@ -5,7 +5,7 @@ from typing import List, Tuple
 import faiss
 import json
 
-from utils import configs
+from .helper import configs
 
 class VectorDatabase:
     def __init__(self, embedding_dim: int=768, db_path: str = None, quantized: bool=True):

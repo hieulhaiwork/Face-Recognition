@@ -47,20 +47,19 @@ class YuNet:
     def detect(self, image: np.ndarray):
         height, width = image.shape[0], image.shape[1]
         model_input_size = yunet_configs.get("input_size", 640)
-
         isresized = False
 
         faces_dict = {}
 
         if height > model_input_size or width > model_input_size:
             r = model_input_size / max(height, width)
-            resized_image = cv2.resize(image, (int(width*r), int(height*r)))
-            height, width = resized_image.shape[0], resized_image.shape[1]
+            image = cv2.resize(image, (int(width*r), int(height*r)))
+            height, width = image.shape[0], image.shape[1]
             isresized = True
 
         self.model.setInputSize((width, height))
 
-        _, faces = self.model.detect(resized_image)
+        _, faces = self.model.detect(image)
 
         if faces is None:
             return faces_dict

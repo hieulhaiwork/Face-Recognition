@@ -1,6 +1,7 @@
 import os
 import cv2
 import time
+os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
 
 from yunet import YuNet
 from visualization import Visualize
@@ -14,10 +15,9 @@ detector = YuNet(model_path=None)
 aligner = AlignFace()
 embedder = MobileFaceNet_em(checkpoint_path=None)
 database = VectorDatabase(quantized=False)
-t1 = time.time()
 
 def inference():
-    image_test = cv2.imread("images/Untitled.png")
+    image_test = cv2.imread("images/Zhang_Ziyi_0002.jpg")
     faces_dict = detector.detect(image_test)
     image_dict = aligner(faces_dict, image_test)
     embeddings_list = embedder.embedding(image_dict)
@@ -27,7 +27,9 @@ def inference():
         distance, index, name = database.get_name(embedding)
         name_list.append(name)
         distance_list.append(distance)
-    # vis(image_test, faces_dict, name_list, distance_list)
-
+    distance_list = [int(x[0, 0]) for x in distance_list]
+    t1 = time.time()
+    vis(image_test, faces_dict, name_list, distance_list)
+    print("Inference time: ", t1 - t0)
 if __name__ == "__main__":
     inference()

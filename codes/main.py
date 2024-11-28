@@ -9,11 +9,11 @@ import numpy as np
 import cv2
 import time
 
-from utils.yunet import YuNet
+from codes.utils.detector.yunet import YuNet
 from utils.visualization import Visualize
-from utils.align_face import AlignFace
-from utils.mobilefacenet import MobileFaceNet_em
-from utils.vector_db import VectorDatabase
+from codes.utils.align.opencv_align import AlignFace
+from codes.utils.embedding.mobilefacenet import MobileFaceNet_em
+from codes.utils.db.vectordb.vector_db import VectorDatabase
 
 vis = Visualize()
 detector = YuNet(model_path=None)

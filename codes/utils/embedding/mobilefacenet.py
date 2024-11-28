@@ -6,7 +6,7 @@ from typing import Optional, Dict
 import torch
 import torchvision.transforms as transforms
 
-from .helper import download_weights, configs
+from ..helper import download_weights, configs
 from .model import MobileFacenet
 
 mobilefacenet_configs = configs.get("model", {}).get("mobilefacenet", {})

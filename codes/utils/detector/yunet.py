@@ -3,7 +3,7 @@ import numpy as np
 import cv2
 from typing import Optional, Dict
 
-from .helper import download_weights, configs
+from ..helper import download_weights, configs
 
 yunet_configs = configs.get("model", {}).get("yunet", {})
 assert yunet_configs != {}

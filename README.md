@@ -22,8 +22,7 @@ I deploy 2 methods to align images: alignment with existent tools from opencv an
 
 For OpenCV method, I simply rotate face that two eye points lie in the same line and resize image to base size (128x128).
 
-![](images/readme/before_alignment2.png)
-![](images/readme/after_alignment2.png)
+![Image1](images/readme/before_alignment2.png) ![Image2](images/readme/after_alignment2.png)
 
 2. Deep Learning method
 

@@ -3,4 +3,5 @@ gdown
 torch
 torchvision
 faiss-cpu
+scikit-learn
 opencv-python >= 4.10.0

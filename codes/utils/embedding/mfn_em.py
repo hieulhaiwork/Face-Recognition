@@ -6,8 +6,10 @@ from typing import Optional, Dict
 import torch
 import torchvision.transforms as transforms
 
-from ..helper import download_weights, configs
-from .model import MobileFacenet
+from ..helper import download_weights, load_configs
+from .mfn_model import MobileFacenet
+
+configs = load_configs()
 
 mobilefacenet_configs = configs.get("model", {}).get("mobilefacenet", {})
 assert mobilefacenet_configs != {}
@@ -40,6 +42,8 @@ class MobileFaceNet_em:
             print("There is an error occured: ", e)
 
         return model
+    def _get_dim(self, image: np.ndarray):
+        return image.shape
     
     def embedding(self, image_dict: Dict[int, np.ndarray]):
         """
@@ -48,14 +52,18 @@ class MobileFaceNet_em:
             - image_dict (Dict[int, np.ndarray]): Aligned image dictionary
         """
         embeddings_list = list(image_dict.values())
+        names_list = list(image_dict.keys())
+
         image_tensor = torch.tensor(np.stack(embeddings_list, axis=0)).permute(0, 3, 1, 2).float()
-        # Chuẩn hóa
 
         with torch.no_grad():
             embedding = self.model(image_tensor)
         
         numpy_array = embedding.cpu().numpy()
-        embedding_list = [numpy_array[i] for i in range(numpy_array.shape[0])]
-        return embedding_list
+        embedding_list = [(names_list[i], numpy_array[i]) for i in range(numpy_array.shape[0])]
+
+        dim = self._get_dim(numpy_array[0])
+        
+        return embedding_list, dim
 
 

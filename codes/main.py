@@ -1,33 +1,25 @@
-"""
-Created by Lê Hiền Hiếu
-Github: https://github.com/hieulhaiwork
-Mail: hieulh.work@gmail.comPPP
-Country: Viet Nam 
-"""
 import os
 import numpy as np
 import cv2
 import time
 
-from codes.utils.detector.yunet import YuNet
-from utils.visualization import Visualize
-from codes.utils.align.opencv_align import AlignFace
-from codes.utils.embedding.mobilefacenet import MobileFaceNet_em
-from codes.utils.db.vectordb.vector_db import VectorDatabase
+from utils import YuNet, VisAlign, VisBase, OpencvAlign, MobileFaceNet_em, FaissDB
 
-vis = Visualize()
 detector = YuNet(model_path=None)
-aligner = AlignFace()
-embedder = MobileFaceNet_em(checkpoint_path=None)
-database = VectorDatabase(quantized=False)
+vis_align = VisAlign()
+vis_base = VisBase()
+aligner = OpencvAlign(base_size=256)
+embedder = MobileFaceNet_em()
 
 def main():
-    image = cv2.imread("images/Zhang_Ziyi_0003.jpg")
+    image = cv2.imread("images/demo/Zhang_Ziyi_0004.jpg")
     faces_dict = detector.detect(image)
-    # vis.detection_vis(image, faces_dict)
+    # vis_base.coord2img(image, faces_dict)
     image_dict = aligner(faces_dict, image)
-    # vis.align_vis(image_dict)
-    embeddings_list = embedder.embedding(image_dict)
+    image_dict = vis_align.add_name(image_dict)
+    # vis_align.show_all(image_dict)
+    embeddings_list, dim = embedder.embedding(image_dict)
+    database = FaissDB(embedding_dim=dim[0])
     database.new(embeddings_list)
 
 if __name__ == '__main__':

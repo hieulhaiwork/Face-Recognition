@@ -1,10 +1,10 @@
 import os
-from typing import Dict, Any
+from typing import Dict, Any, List
 
 import numpy as np
 import cv2
 
-from ..visualization import VisBase
+from .vis_base import VisBase
 
 class VisAlign(VisBase):
     def __init__(self):
@@ -14,7 +14,7 @@ class VisAlign(VisBase):
         """
         Get names of all people in the images.
         Args:
-        - img_dict (dict): Got from facial detector model.
+        - img_dict (dict): Got after alignment process.
         """
         assert type(img_dict) != "dict", f"Invalid type of input, expected dict but got {type(img_dict)}"
         output_dict = {}
@@ -38,9 +38,8 @@ class VisAlign(VisBase):
         assert type(img_dict) != "dict", f"Invalid type of input, expected dict but got {type(img_dict)}"
         for key, image in img_dict.items():
             assert type(image) != "np.ndarray", f"Invalid type of image, expected numpy.ndarray but got {type(image)}"
-            cv2.imshow(image, title=f"Name: {key}")
-            cv2.waitKey(0)
-        cv2.destroyAllWindows()
+            self._show(image, title=f"Name: {key}")
+        self._close()
 
 
 

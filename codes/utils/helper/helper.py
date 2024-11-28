@@ -5,7 +5,7 @@ import json
 import gdown
 
 def load_configs():
-    with open('codes/utils/configs.json', 'r') as f:
+    with open('codes/utils/helper/configs.json', 'r') as f:
         configs = json.load(f)
     return configs
 

@@ -4,14 +4,15 @@ from typing import List, Tuple
 
 import faiss
 import json
+from sklearn.preprocessing import normalize
 
-from .helper import configs
+from ...helper import load_configs
 
-class VectorDatabase:
-    def __init__(self, embedding_dim: int=768, db_path: str = None, quantized: bool=True):
+class FaissDB:
+    def __init__(self, embedding_dim: int=768, db_path: str = None):
         self.embedding_dim = embedding_dim
-        self.quantized = quantized
         self.vector_db = None
+        configs = load_configs()
         self.names_path = configs.get("names").get("path")
 
         if not os.path.isfile(self.names_path):
@@ -37,11 +38,7 @@ class VectorDatabase:
         """
         Initialize vector database with  Product Quantization (PQ) in Faiss to reduce the storage and increase retrieval speed.
         """
-        if self.quantized:
-            index = faiss.IndexPQ(self.embedding_dim, 8, 8)
-        else:
-            index = faiss.IndexFlatL2(self.embedding_dim)
-        
+        index = faiss.IndexFlatL2(self.embedding_dim)
         return index
 
     def _load_db(self):
@@ -79,7 +76,8 @@ class VectorDatabase:
 
     def _add(self, embedding_matrix: np.ndarray):
         assert self.vector_db is not None
-        self.vector_db.add(embedding_matrix.reshape(1, -1))
+        embedding_matrix = normalize(embedding_matrix.reshape(1, -1), axis=1)
+        self.vector_db.add(embedding_matrix)
         return True
 
     def _search(self, embedding_matrix: np.ndarray, k: int = 1):
@@ -92,16 +90,20 @@ class VectorDatabase:
 
         return distances, indices[0][0], name
     
-    def new(self, image_list: List[np.ndarray]):
+    def _show_names(self):
+        names = self._init_names_file(create=False).get("names")
+        return names
+    
+    def new(self, image_list: List[Tuple[str, np.ndarray]]):
         assert len(image_list) > 0
-        for image in image_list:
+        for (name, image) in image_list:
             self._add(image)
-            name = input("Input name of this person: ")
             self.names_list.append(name)
         self._save()
         return True
     
     def get_name(self, embedding: np.ndarray, k: int = 1):
-        distance, index, name = self._search(embedding.reshape(1, -1), k)
+        embedding = normalize(embedding.reshape(1, -1), axis=1)
+        distance, index, name = self._search(embedding, k)
         return distance, index, name
         

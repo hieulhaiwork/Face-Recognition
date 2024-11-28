@@ -1,3 +1,6 @@
 __pycache__
 models/*
 database/*
+codes/debug.py
+!models/__init__.py
+!database/__init__.py

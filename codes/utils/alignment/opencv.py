@@ -1,40 +1,56 @@
 import os
-import numpy as np
+from typing import Dict
 
 import cv2
+import numpy as np
 
-class AlignFace:
-    def __init__(self):
-        self.faces = {}
+class OpencvAlign:
+    """
+    Class that uses alignment methods from opencv library.
+    """
+    def __init__(self, base_size: int = 128):
+        self.base_size = base_size
 
-    def __call__(self, faces_dict, image):
-        image_dict = {}
+    def __call__(self, faces_dict, image: np.ndarray):
+        """
+        Args:
+        - faces_dict (Dict): got from detector, includes "bounding_box", "features", "score"
+        - image (np.ndarray): full image, not resized
+        """
+        # Expected output
+        aligned_img = {}
+
         for key, face_dict in faces_dict.items():
             image_clone = image.copy()
             cropped_face, new_face_dict = self._crop(face_dict, image_clone)
             aligned_face = self._align(new_face_dict, cropped_face)
-            image_dict[key] = aligned_face
-        return image_dict
+            aligned_img[key] = aligned_face
+        return aligned_img
 
     def _crop(self, face_dict, image):
         """
+        Crop faces by bounding box coords and update features' coords to match with new cropped faces.
         """
+        # Crop face
         (xmin, ymin, xmax, ymax) = face_dict['bounding_box']
         cropped_face = image[ymin:ymax, xmin:xmax]
 
+        # Update coords
         features = face_dict['features']
         new_features = []
-        for t in features:
-            new_features.append(tuple(a - b for a, b in zip(t, (xmin,ymin))))
+        for feature in features:
+            new_features.append(tuple(a - b for a, b in zip(feature, (xmin,ymin))))
         face_dict['features'] = new_features
 
         return cropped_face, face_dict
 
 
-    def _align(self, face_dict, image):
+    def _align(self, face_dict: Dict, image: np.ndarray):
+        """
+        Rotate and resize face to standard configs. 
+        """
         h, w = image.shape[:2]
-        base_size = 128
-
+        
         eyes = face_dict['features'][:2]
         right_eye = eyes[0]
         left_eye = eyes[1]
@@ -47,10 +63,11 @@ class AlignFace:
         # Calculate the center between 2 eyes
         center = ((left_eye[0] + right_eye[0]) // 2, (left_eye[1] + right_eye[1]) // 2)
         
+        # Rotate
         M = cv2.getRotationMatrix2D(center, angle, 1)
-
         aligned_face = cv2.warpAffine(image, M, (w, h), flags=cv2.INTER_CUBIC)
 
-        aligned_face = cv2.resize(aligned_face, (base_size, base_size))
+        # Resize
+        aligned_face = cv2.resize(aligned_face, (self.base_size, self.base_size))
 
         return aligned_face
